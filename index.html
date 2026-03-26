@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="author" content="Toirov Asadbek">
+  <meta name="description" content="Bu website xoxlagan sõzingizni talaffuz qilib beradi" >
+  <meta name="keywords" content="Talaffuz, Pronix, Sõzlarni tarjima qiluvchi">
+    <title>Pronix - So'zlarni talaffuz qil!</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            color: white;
+        }
+        header {
+            background: rgba(255,255,255,0.1);
+            backdrop-filter: blur(20px);
+            padding: 1.5rem 2rem;
+            box-shadow: 0 4px 30px rgba(0,0,0,0.2);
+        }
+        .header-content {
+            max-width: 1200px; margin: 0 auto;
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        h1 { 
+            font-size: 2.2rem; font-weight: 800; 
+            background: linear-gradient(45deg, #ff6b6b, #4ecdc4);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+        }
+        main { flex: 1; max-width: 800px; margin: 2rem auto; padding: 0 1rem; }
+        .input-container {
+            background: rgba(255,255,255,0.15);
+            backdrop-filter: blur(20px); padding: 3rem 2.5rem;
+            border-radius: 30px; box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            border: 1px solid rgba(255,255,255,0.2); text-align: center;
+        }
+        input[type="text"] {
+            width: 100%; padding: 1.5rem 2rem; font-size: 1.5rem;
+            border: 2px solid rgba(255,255,255,0.3); border-radius: 50px;
+            outline: none; background: rgba(255,255,255,0.1);
+            color: white; backdrop-filter: blur(10px);
+            transition: all 0.4s ease; font-weight: 500;
+        }
+        input[type="text"]::placeholder { color: rgba(255,255,255,0.7); }
+        input[type="text"]:focus {
+            border-color: #4ecdc4; box-shadow: 0 0 30px rgba(78,205,196,0.5);
+            transform: scale(1.03); background: rgba(255,255,255,0.2);
+        }
+        .buttons {
+            display: flex; gap: 1.5rem; justify-content: center;
+            margin-top: 2rem; flex-wrap: wrap;
+        }
+        button {
+            background: linear-gradient(45deg, #ff6b6b, #ee5a24);
+            color: white; border: none; padding: 1.3rem 2.5rem;
+            border-radius: 50px; font-size: 1.2rem; font-weight: bold;
+            cursor: pointer; transition: all 0.3s ease;
+            box-shadow: 0 10px 30px rgba(255,107,107,0.4);
+            position: relative; overflow: hidden;
+        }
+        button.us { background: linear-gradient(45deg, #4ecdc4, #44a08d); box-shadow: 0 10px 30px rgba(78,205,196,0.4); }
+        button:hover {
+            transform: translateY(-5px) scale(1.05);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.3);
+        }
+        button:active { transform: translateY(-2px) scale(1.02); }
+        button.speaking {
+            animation: speakingPulse 0.6s infinite;
+            box-shadow: 0 0 30px rgba(255,255,255,0.8);
+        }
+        @keyframes speakingPulse {
+            0%, 100% { transform: scale(1); filter: brightness(1); }
+            50% { transform: scale(1.1); filter: brightness(1.3); }
+        }
+        .word-display {
+            margin-top: 2rem; padding: 2rem;
+            background: rgba(255,255,255,0.1); border-radius: 25px;
+            backdrop-filter: blur(20px); text-align: center;
+            font-size: 4rem; font-weight: 900;
+            background: linear-gradient(45deg, #ff6b6b, #4ecdc4, #667eea);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            background-clip: text; letter-spacing: 5px;
+            display: none; animation: bounceIn 0.8s ease;
+        }
+        @keyframes bounceIn {
+            0% { opacity: 0; transform: scale(0.3); }
+            50% { opacity: 1; transform: scale(1.05); }
+            70% { transform: scale(0.98); }
+            100% { opacity: 1; transform: scale(1); }
+        }
+        .status {
+            margin-top: 2rem; padding: 1.5rem; border-radius: 20px;
+            font-size: 1.3rem; font-weight: bold; text-align: center;
+            background: rgba(255,255,255,0.1); backdrop-filter: blur(10px);
+        }
+        .status-listening { color: #4ecdc4; }
+        .status-speaking { color: #ff6b6b; animation: pulseText 1s infinite; }
+        @keyframes pulseText {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+        footer {
+            background: rgba(0,0,0,0.3); padding: 2rem; text-align: center;
+            backdrop-filter: blur(10px); margin-top: auto;
+        }
+        @media (max-width: 768px) {
+            .word-display { font-size: 2.5rem; }
+            .buttons { flex-direction: column; align-items: center; }
+            button { padding: 1.2rem 2rem; }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="header-content">
+            <h1>🎤 Pronix</h1>
+        </div>
+    </header>
+
+    <main>
+        <div class="input-container">
+            <input type="text" id="wordInput" 
+                   placeholder="So'zni yozing... (kompyuter, telefon, love)" 
+                   autocomplete="off">
+            <div class="buttons">
+                <button class="us" onclick="speakNow('us')">🇺🇸 US Talaffuz</button>
+                <button onclick="speakNow('uk')">🇬🇧 UK Talaffuz</button>
+            </div>
+            <div class="status" id="status">So'z yozing va tugmani bosing 🎯</div>
+        </div>
+
+        <div class="word-display" id="wordDisplay"></div>
+    </main>
+
+    <footer>
+        <p>✅ Pronix bilan so'zlarni mukammal talaffuz qiling! 🎧</p>
+    </footer>
+
+    <script>
+        let currentWord = '';
+        let availableVoices = [];
+
+        // Voices yuklash funksiyasi
+        function loadVoices() {
+            availableVoices = speechSynthesis.getVoices();
+            console.log('✅ Voices yuklandi:', availableVoices.length);
+            
+            // Eng yaxshi US va UK voice'larni topish
+            const usVoices = availableVoices.filter(voice => 
+                voice.lang === 'en-US' || 
+                voice.name.toLowerCase().includes('us') ||
+                voice.name.toLowerCase().includes('american')
+            );
+            
+            const ukVoices = availableVoices.filter(voice => 
+                voice.lang === 'en-GB' || 
+                voice.name.toLowerCase().includes('uk') ||
+                voice.name.toLowerCase().includes('british')
+            );
+            
+            console.log('🇺🇸 US voices:', usVoices.map(v => v.name));
+            console.log('🇬🇧 UK voices:', ukVoices.map(v => v.name));
+        }
+
+        // Voice tanlash funksiyasi
+        function getVoice(type) {
+            if (availableVoices.length === 0) {
+                availableVoices = speechSynthesis.getVoices();
+            }
+
+            let voice;
+            
+            if (type === 'us') {
+                // US voice prioriteti
+                voice = availableVoices.find(v => v.lang === 'en-US') ||
+                       availableVoices.find(v => v.name.toLowerCase().includes('us')) ||
+                       availableVoices.find(v => v.name.toLowerCase().includes('american')) ||
+                       availableVoices.find(v => v.lang.startsWith('en'));
+            } else {
+                // UK voice prioriteti
+                voice = availableVoices.find(v => v.lang === 'en-GB') ||
+                       availableVoices.find(v => v.name.toLowerCase().includes('uk')) ||
+                       availableVoices.find(v => v.name.toLowerCase().includes('british')) ||
+                       availableVoices.find(v => v.lang.startsWith('en'));
+            }
+            
+            console.log(`${type.toUpperCase()} voice tanlandi:`, voice ? voice.name : 'Topilmadi');
+            return voice;
+        }
+
+        function speakNow(type) {
+            const input = document.getElementById('wordInput').value.trim();
+            const wordDisplay = document.getElementById('wordDisplay');
+            const status = document.getElementById('status');
+            const buttons = document.querySelectorAll('button');
+
+            if (!input) {
+                status.textContent = '❌ Avval so\'z yozing!';
+                status.className = 'status';
+                return;
+            }
+
+            currentWord = input.toLowerCase();
+            
+            wordDisplay.textContent = input.toUpperCase();
+            wordDisplay.style.display = 'block';
+            wordDisplay.scrollIntoView({ behavior: 'smooth' });
+
+            buttons.forEach(btn => btn.classList.add('speaking'));
+            status.textContent = `${type === 'us' ? '🇺🇸 US' : '🇬🇧 UK'} talaffuz... 🎵`;
+            status.className = 'status status-speaking';
+
+            // Oldingi gapirishni to'xtatish
+            speechSynthesis.cancel();
+            
+            // Voices yuklanganligini tekshirish
+            if (availableVoices.length === 0) {
+                loadVoices();
+                setTimeout(() => speakNow(type), 100);
+                return;
+            }
+
+            const utterance = new SpeechSynthesisUtterance(currentWord);
+            const voice = getVoice(type);
+
+            utterance.voice = voice;
+            utterance.rate = 0.85;  // Tabiiyroq tezlik
+            utterance.pitch = 1;
+            utterance.volume = 1;
+
+            utterance.onstart = () => {
+                console.log(`🎤 ${type.toUpperCase()}: "${currentWord}" - Voice: ${voice ? voice.name : 'Default'}`);
+            };
+
+            utterance.onend = () => {
+                buttons.forEach(btn => btn.classList.remove('speaking'));
+                status.textContent = `✅ "${input}" ${type === 'us' ? '🇺🇸 US' : '🇬🇧 UK'} talaffuz tugadi!`;
+                status.className = 'status status-listening';
+                setTimeout(() => {
+                    status.textContent = 'Yana bosing yoki Enter! 🎯';
+                    status.className = 'status';
+                }, 2500);
+            };
+
+            utterance.onerror = (e) => {
+                console.error('Speech error:', e);
+                buttons.forEach(btn => btn.classList.remove('speaking'));
+                status.textContent = '❌ Talaffuzda xatolik yuz berdi. Sahifani yangilang!';
+                status.className = 'status';
+            };
+
+            speechSynthesis.speak(utterance);
+        }
+
+        // Enter bosganda US talaffuz
+        document.getElementById('wordInput').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') speakNow('us');
+        });
+
+        // Voices yuklash event listener
+        speechSynthesis.onvoiceschanged = loadVoices;
+
+        // Dastlabki yuklash
+        loadVoices();
+        setTimeout(loadVoices, 100);
+        setTimeout(loadVoices, 300);
+    </script>
+</body>
+</html>
